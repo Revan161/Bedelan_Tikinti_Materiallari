@@ -1,118 +1,751 @@
-// Mobile menu toggle
-const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-const navLinks = document.querySelector('.nav-links');
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bedelan Tikinti Materialları - Kataloq</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-mobileMenuToggle.addEventListener('click', function() {
-    navLinks.classList.toggle('active');
-});
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f5f0 0%, #e8e6e0 100%);
+            min-height: 100vh;
+        }
 
-// Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', function() {
-        navLinks.classList.remove('active');
-    });
-});
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const target = document.querySelector(targetId);
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b7355;
+            text-decoration: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #5d4e75;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            background: rgba(93, 78, 117, 0.1);
+        }
+
+        .nav-links a:hover {
+            background: #8b7355;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            color: #5d4e75;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 0;
+            color: #5d4e75;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+            color: #8b7355;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            color: #666;
+        }
+
+        .catalog-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #8b7355, #5d4e75);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #8b7355;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        .search-bar:focus {
+            box-shadow: 0 4px 15px rgba(139, 115, 85, 0.3);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #8b7355;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #5d4e75;
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #8b7355;
+            background: white;
+            color: #8b7355;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #8b7355;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 2rem 0;
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border-color: #8b7355;
+        }
+
+        .product-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            color: #5d4e75;
+        }
+
+        .product-card p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .wood-sizes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .wood-size {
+            background: #f5f5f0;
+            color: #5d4e75;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .wood-size:hover {
+            background: #8b7355;
+            color: white;
+        }
+
+        .price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #8b7355;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #f5f5f0;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .price-inquiry {
+            background: linear-gradient(45deg, #8b7355, #5d4e75);
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .special-product {
+            background: linear-gradient(135deg, #8b7355 0%, #5d4e75 100%);
+            color: white;
+        }
+
+        .special-product h3,
+        .special-product p {
+            color: white;
+        }
+
+        .special-product .price {
+            color: #5d4e75;
+            background: white;
+            font-size: 1.6rem;
+        }
+
+        .cement-section {
+            background: white;
+            border: 2px solid #f0f0f0;
+            padding: 3rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .cement-section h3 {
+            color: #5d4e75;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .cement-brands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .cement-brand {
+            background: #f8f6f0;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .cement-brand:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .cement-image {
+            width: 120px;
+            height: 150px;
+            margin: 0 auto 1rem;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-info {
+            background: white;
+            border: 2px solid #f0f0f0;
+            padding: 3rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+            padding: 1rem;
+            background: #f5f5f0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #8b7355;
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .contact-item span:first-child {
+            margin-right: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .contact-item a {
+            color: #5d4e75;
+            text-decoration: none;
+        }
+
+        .contact-item:hover a {
+            color: white;
+        }
+
+        footer {
+            background: #5d4e75;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f5f5f0;
+            border-radius: 15px;
+            display: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: white;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 1rem;
+                transition: left 0.3s ease;
+                padding-top: 2rem;
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .content {
+                padding: 2rem;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+            }
+            
+            .catalog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-container {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">Bedelan Tikinti Materialları</a>
+            <div class="mobile-menu-toggle">☰</div>
+            <ul class="nav-links">
+                <li><a href="#ana">Ana Səhifə</a></li>
+                <li><a href="#mehsullar">Kataloq</a></li>
+                <li><a href="#sement">Sement</a></li>
+                <li><a href="#elaqe">Əlaqə</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="ana">
+            <div class="container">
+                <h1>Bedelan Tikinti Materialları</h1>
+                <p>Keyfiyyətli tikinti materialları - Etibarlı seçim</p>
+                <div class="catalog-badge">📋 Məhsul Kataloqu</div>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="Kataloquda məhsul axtarın..." id="searchInput">
+                <button class="search-btn" onclick="searchProducts()">🔍</button>
+            </div>
+        </div>
+
+        <section class="content container" id="mehsullar">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; color: #5d4e75;">Məhsul Kataloqu</h2>
+            
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterProducts('all')">Hamısı</button>
+                <button class="filter-btn" onclick="filterProducts('wood')">Taxta</button>
+                <button class="filter-btn" onclick="filterProducts('metal')">Metal</button>
+                <button class="filter-btn" onclick="filterProducts('doors')">Qapılar</button>
+                <button class="filter-btn" onclick="filterProducts('furniture')">Mebel</button>
+                <button class="filter-btn" onclick="filterProducts('other')">Digər</button>
+            </div>
+
+            <div class="no-results" id="noResults">
+                Axtarış nəticəsi tapılmadı. Başqa açar söz cəhd edin.
+            </div>
+
+            <div class="catalog-grid" id="products">
+                <div class="product-card" data-category="wood">
+                    <img src="https://lookaside.instagram.com/seo/google_widget/crawler/?media_id=2682009745768963732" alt="Taxta materiallar" class="product-image">
+                    <h3>🪵 Taxta Materiallar</h3>
+                    <p>Müxtəlif ölçülərdə keyfiyyətli taxta materiallar. Tikinti işləri üçün möhkəm və etibarlı.</p>
+                    <div class="wood-sizes">
+                        <div class="wood-size">5×10</div>
+                        <div class="wood-size">5×15</div>
+                        <div class="wood-size">5×20</div>
+                    </div>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="metal">
+                    <img src="https://www.stp.az/uploads/fields/2018/12/81000ddb71f5aea0305e95b146d2299d.jpg" alt="Armatur" class="product-image">
+                    <h3>🏗 Armatur</h3>
+                    <p>Müxtəlif diametrlərdə keyfiyyətli armatur materialları. Betonarmə konstruksiyalar üçün.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="metal">
+                    <img src="https://osq.az/storage/pages/111/00844bca-0871-43af-a463-01956a40091d.jpg" alt="Profil" class="product-image">
+                    <h3>📐 Profil</h3>
+                    <p>Qutu profil, bucaq profil və digər metal profillər. Çərçivə və konstruksiya işləri üçün.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="other">
+                    <img src="https://insaat.az/uploads/news/95f19da408d881c0e5b47d8a5a01e907.jpg" alt="Alçıpan" class="product-image">
+                    <h3>🏠 Alçıpan</h3>
+                    <p>Divar və tavan üçün keyfiyyətli alçıpan materialları. Daxili ayrıcı divarlar üçün.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="other">
+                    <h3>🔩 Mismar</h3>
+                    <p>Müxtəlif ölçülərdə mismar və bağlama materialları. Tikinti və təmir işləri üçün.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="doors">
+                    <h3>🚪 Çöl Qapısı</h3>
+                    <p>Müxtəlif dizayn və ölçülərdə çöl qapıları. Dayanıqlı və təhlükəsiz.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="doors">
+                    <h3>🏡 Həyət Qapısı</h3>
+                    <p>Həyət üçün müxtəlif növ qapılar. Dekorativ və funksional dizayn.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card special-product" data-category="furniture">
+                    <h3>🪑 Stol</h3>
+                    <p>Həyət üçün dayanıqlı və keyfiyyətli stol. Stulsuz təklif edilir.</p>
+                    <div class="price">250 ₼</div>
+                </div>
+
+                <div class="product-card" data-category="other">
+                    <h3>🪟 Plastik Pəncərə</h3>
+                    <p>Enerji qənaətli plastik pəncərələr. Müxtəlif ölçü və dizaynlarda.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="other">
+                    <h3>🏠 Dam Örtükləri</h3>
+                    <p>Müxtəlif növ dam örtük materialları. Su keçirməz və uzunömürlü.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card" data-category="metal">
+                    <h3>🔧 Dəmir Turbalar</h3>
+                    <p>Müxtəlif ölçülərdə dəmir turbalar. Su və qaz xətləri üçün.</p>
+                    <div class="price-inquiry">📞 Qiymət sorğusu üçün əlaqə saxlayın</div>
+                </div>
+
+                <div class="product-card special-product" data-category="other">
+                    <h3>🔥 Manqal</h3>
+                    <p>Kabablıq üçün keyfiyyətli manqal. Dayanıqlı və praktik dizayn.</p>
+                    <div class="price">50 ₼</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content container" id="sement">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; color: #5d4e75;">Sement Məhsulları</h2>
+            
+            <div class="cement-section">
+                <h3>Holcim Sement</h3>
+                <div class="cement-brands">
+                    <div class="cement-brand">
+                        <img src="https://www.holcim.az/sites/azerbaijan/files/2023-11/kise_third.webp" alt="Holcim 300 marka" class="cement-image">
+                        <h4>300 Marka</h4>
+                        <p style="font-size: 0.9rem; margin: 0.5rem 0;">Ümumi tikinti işləri, kiçik tikintilər, zəif yükləmə</p>
+                        <div class="price">8,50 ₼</div>
+                    </div>
+                    <div class="cement-brand">
+                        <img src="https://www.holcim.az/sites/azerbaijan/files/2023-11/kise_fifth.webp" alt="Holcim 400 marka" class="cement-image">
+                        <h4>400 Marka</h4>
+                        <p style="font-size: 0.9rem; margin: 0.5rem 0;">Orta yükləmə, mərtəbəli tikintilər, möhkəm konstruksiyalar</p>
+                        <div class="price">9 ₼</div>
+                    </div>
+                    <div class="cement-brand">
+                        <img src="https://www.holcim.az/sites/azerbaijan/files/2023-11/kise_fourth.webp" alt="Holcim 500 marka" class="cement-image">
+                        <h4>500 Marka</h4>
+                        <p style="font-size: 0.9rem; margin: 0.5rem 0;">Ağır yükləmə, yüksək binalar, xüsusi konstruksiyalar</p>
+                        <div class="price">9,50 ₼</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content container" id="elaqe">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; color: #5d4e75;">Bizimlə Əlaqə</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span>📞</span>
+                    <a href="tel:+994502245575">+994 50 224 55 75</a>
+                </div>
+                <div class="contact-item">
+                    <span>📱</span>
+                    <a href="https://wa.me/994502245575">WhatsApp</a>
+                </div>
+                <div class="contact-item">
+                    <span>📍</span>
+                    <span>Masallı rayon, Bədəlan kəndi</span>
+                </div>
+                <div class="contact-item">
+                    <span>🏢</span>
+                    <span>Bedelan Tikinti Materialları</span>
+                </div>
+            </div>
+            <p style="margin-top: 2rem; text-align: center; font-size: 1.1rem;">Tikinti materiallarına ehtiyacınız varsa, bizə müraciət edin. Keyfiyyətli məhsullar və münasib qiymətlər!</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Bedelan Tikinti Materialları. Bütün hüquqlar qorunur.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuToggle.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
             });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Search functionality
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const products = document.querySelectorAll('.product-card');
+            const noResults = document.getElementById('noResults');
+            let hasResults = false;
+            
+            products.forEach(product => {
+                const title = product.querySelector('h3').textContent.toLowerCase();
+                const description = product.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || searchTerm === '') {
+                    product.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            if (!hasResults && searchTerm !== '') {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
         }
-    });
-});
 
-// Search functionality
-function searchProducts() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const products = document.querySelectorAll('.product-card');
-    const noResults = document.getElementById('noResults');
-    let hasResults = false;
-    
-    products.forEach(product => {
-        const title = product.querySelector('h3').textContent.toLowerCase();
-        const description = product.querySelector('p').textContent.toLowerCase();
-        
-        if (title.includes(searchTerm) || description.includes(searchTerm)) {
-            product.style.display = 'block';
-            hasResults = true;
-        } else {
-            product.style.display = 'none';
+        // Filter functionality
+        function filterProducts(category) {
+            const products = document.querySelectorAll('.product-card');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const noResults = document.getElementById('noResults');
+            
+            // Update active filter button
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Find the clicked button and add active class
+            filterBtns.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(category) || category === 'all') {
+                    if ((category === 'all' && btn.textContent === 'Hamısı') ||
+                        (category === 'wood' && btn.textContent === 'Taxta') ||
+                        (category === 'metal' && btn.textContent === 'Metal') ||
+                        (category === 'doors' && btn.textContent === 'Qapılar') ||
+                        (category === 'furniture' && btn.textContent === 'Mebel') ||
+                        (category === 'other' && btn.textContent === 'Digər')) {
+                        btn.classList.add('active');
+                    }
+                }
+            });
+            
+            // Clear search input when filtering
+            document.getElementById('searchInput').value = '';
+            
+            // Filter products
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category === category) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+
+            // Hide no results message when filtering
+            noResults.style.display = 'none';
         }
-    });
 
-    // Show/hide no results message
-    noResults.style.display = hasResults || searchTerm === '' ? 'none' : 'block';
-}
+        // Search on Enter key
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchProducts();
+            }
+        });
 
-// Enhanced real-time search functionality
-document.getElementById('searchInput').addEventListener('input', function() {
-    searchProducts();
-    
-    // Reset filters when searching
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent.trim() === 'Hamısı') {
-            btn.classList.add('active');
-        }
-    });
-});
-
-// Filter functionality
-function filterProducts(category) {
-    const products = document.querySelectorAll('.product-card');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const noResults = document.getElementById('noResults');
-    
-    // Update active filter button
-    filterBtns.forEach(btn => btn.classList.remove('active'));
-    
-    // Find the clicked button and add active class
-    const activeButton = Array.from(filterBtns).find(btn => {
-        return (category === 'all' && btn.textContent.trim() === 'Hamısı') ||
-               (category === 'wood' && btn.textContent.trim() === 'Taxta') ||
-               (category === 'metal' && btn.textContent.trim() === 'Metal') ||
-               (category === 'doors' && btn.textContent.trim() === 'Qapılar') ||
-               (category === 'furniture' && btn.textContent.trim() === 'Mebel') ||
-               (category === 'other' && btn.textContent.trim() === 'Digər');
-    });
-    
-    if (activeButton) {
-        activeButton.classList.add('active');
-    }
-    
-    // Clear search input when filtering
-    document.getElementById('searchInput').value = '';
-    
-    // Filter products
-    let hasResults = false;
-    products.forEach(product => {
-        if (category === 'all' || product.dataset.category === category) {
-            product.style.display = 'block';
-            hasResults = true;
-        } else {
-            product.style.display = 'none';
-        }
-    });
-
-    // Show/hide no results message
-    noResults.style.display = hasResults || category === 'all' ? 'none' : 'block';
-}
-
-// Search on Enter key
-document.getElementById('searchInput').addEventListener('keyup', function(event) {
-    if (event.key === 'Enter') {
-        searchProducts();
-    }
-});
-
-// Initialize with all products shown
-window.addEventListener('DOMContentLoaded', function() {
-    filterProducts('all');
-});
+        // Real-time search
