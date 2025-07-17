@@ -1,303 +1,118 @@
-<!DOCTYPE html>
-<html lang="az">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bedelan Tikinti Materialları</title>
-<style>
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-  body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f0;
-    color: #333;
-  }
-  header {
-    background: #fff;
-    padding: 1rem 2rem;
-    position: sticky;
-    top: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-  }
-  .logo {
-    font-weight: bold;
-    color: #8b7355;
-    font-size: 1.5rem;
-  }
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-  }
-  .nav-links a {
-    text-decoration: none;
-    color: #5d4e75;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    transition: background 0.3s;
-  }
-  .nav-links a:hover {
-    background: #8b7355;
-    color: white;
-  }
-  .mobile-menu-toggle {
-    display: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #5d4e75;
-  }
-  @media (max-width: 768px) {
-    .nav-links {
-      position: fixed;
-      top: 60px;
-      left: -100%;
-      flex-direction: column;
-      width: 100%;
-      background: white;
-      height: calc(100vh - 60px);
-      padding-top: 1rem;
-      transition: left 0.3s ease;
-    }
-    .nav-links.active {
-      left: 0;
-    }
-    .mobile-menu-toggle {
-      display: block;
-    }
-  }
-  main {
-    max-width: 1000px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-  .search-container {
-    margin-bottom: 1rem;
-    position: relative;
-  }
-  #searchInput {
-    width: 100%;
-    padding: 10px 40px 10px 15px;
-    font-size: 1rem;
-    border: 2px solid #8b7355;
-    border-radius: 25px;
-    outline: none;
-  }
-  #searchBtn {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #8b7355;
-    border: none;
-    color: white;
-    padding: 7px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  .filter-container {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-  }
-  .filter-btn {
-    border: 2px solid #8b7355;
-    background: white;
-    color: #8b7355;
-    padding: 7px 18px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-  }
-  .filter-btn.active,
-  .filter-btn:hover {
-    background: #8b7355;
-    color: white;
-  }
-  .catalog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-    gap: 1.5rem;
-  }
-  .product-card {
-    background: white;
-    padding: 1rem 1.2rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .product-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  }
-  .product-card h3 {
-    color: #5d4e75;
-    margin-bottom: 0.5rem;
-  }
-  .product-card p {
-    font-size: 0.95rem;
-    color: #666;
-  }
-  .no-results {
-    text-align: center;
-    color: #999;
-    font-size: 1.1rem;
-    margin-top: 2rem;
-    display: none;
-  }
-</style>
-</head>
-<body>
-<header>
-  <div class="logo">Bedelan Tikinti Materialları</div>
-  <div class="mobile-menu-toggle">☰</div>
-  <ul class="nav-links">
-    <li><a href="#ana">Ana Səhifə</a></li>
-    <li><a href="#mehsullar">Kataloq</a></li>
-    <li><a href="#elaqe">Əlaqə</a></li>
-  </ul>
-</header>
-<main>
-  <section id="ana">
-    <h1 style="text-align:center; color:#8b7355;">Bedelan Tikinti Materialları</h1>
-    <p style="text-align:center; color:#666; margin-bottom:2rem;">Keyfiyyətli tikinti materialları - Etibarlı seçim</p>
-  </section>
+// Mobile menu toggle
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const navLinks = document.querySelector('.nav-links');
 
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Məhsullar arasında axtar...">
-    <button id="searchBtn">🔍</button>
-  </div>
-
-  <div class="filter-container">
-    <button class="filter-btn active" data-cat="all">Hamısı</button>
-    <button class="filter-btn" data-cat="wood">Taxta</button>
-    <button class="filter-btn" data-cat="metal">Metal</button>
-    <button class="filter-btn" data-cat="doors">Qapılar</button>
-    <button class="filter-btn" data-cat="furniture">Mebel</button>
-    <button class="filter-btn" data-cat="other">Digər</button>
-  </div>
-
-  <div class="catalog-grid" id="products">
-    <div class="product-card" data-category="wood">
-      <h3>🪵 Taxta Materiallar</h3>
-      <p>Müxtəlif ölçülərdə keyfiyyətli taxta materiallar.</p>
-    </div>
-    <div class="product-card" data-category="metal">
-      <h3>🏗 Armatur</h3>
-      <p>Müxtəlif diametrlərdə keyfiyyətli armatur materialları.</p>
-    </div>
-    <div class="product-card" data-category="doors">
-      <h3>🚪 Çöl Qapısı</h3>
-      <p>Dayanıqlı və təhlükəsiz çöl qapıları.</p>
-    </div>
-    <div class="product-card" data-category="furniture">
-      <h3>🪑 Stol</h3>
-      <p>Həyət üçün dayanıqlı və keyfiyyətli stol.</p>
-    </div>
-    <div class="product-card" data-category="other">
-      <h3>🔩 Mismar</h3>
-      <p>Müxtəlif ölçülərdə mismar və bağlama materialları.</p>
-    </div>
-  </div>
-
-  <div class="no-results" id="noResults">Axtarış nəticəsi tapılmadı.</div>
-
-  <section id="elaqe" style="margin-top:3rem;">
-    <h2 style="text-align:center; color:#5d4e75;">Bizimlə Əlaqə</h2>
-    <p style="text-align:center;">Telefon: +994 50 224 55 75 | WhatsApp: <a href="https://wa.me/994502245575" target="_blank">Mesaj göndər</a></p>
-  </section>
-</main>
-
-<script>
-  // Mobile menu toggle
-  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-  const navLinks = document.querySelector('.nav-links');
-  mobileMenuToggle.addEventListener('click', () => {
+mobileMenuToggle.addEventListener('click', function() {
     navLinks.classList.toggle('active');
-  });
+});
 
-  // Close mobile menu on link click
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => navLinks.classList.remove('active'));
-  });
-
-  // Smooth scroll for navigation
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', e => {
-      e.preventDefault();
-      const target = document.querySelector(anchor.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
+// Close mobile menu when clicking on a link
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', function() {
+        navLinks.classList.remove('active');
     });
-  });
+});
 
-  const searchInput = document.getElementById('searchInput');
-  const searchBtn = document.getElementById('searchBtn');
-  const products = document.querySelectorAll('.product-card');
-  const noResults = document.getElementById('noResults');
-  const filterBtns = document.querySelectorAll('.filter-btn');
-
-  function filterProducts(category) {
-    let found = false;
-    products.forEach(p => {
-      if (category === 'all' || p.dataset.category === category) {
-        p.style.display = 'block';
-        found = true;
-      } else {
-        p.style.display = 'none';
-      }
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const target = document.querySelector(targetId);
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
     });
-    noResults.style.display = found ? 'none' : 'block';
+});
 
-    // Update buttons active state
-    filterBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.cat === category);
+// Search functionality
+function searchProducts() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const products = document.querySelectorAll('.product-card');
+    const noResults = document.getElementById('noResults');
+    let hasResults = false;
+    
+    products.forEach(product => {
+        const title = product.querySelector('h3').textContent.toLowerCase();
+        const description = product.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            product.style.display = 'block';
+            hasResults = true;
+        } else {
+            product.style.display = 'none';
+        }
     });
 
-    // Clear search input on filter
-    searchInput.value = '';
-  }
+    // Show/hide no results message
+    noResults.style.display = hasResults || searchTerm === '' ? 'none' : 'block';
+}
 
-  function searchProducts() {
-    const term = searchInput.value.toLowerCase().trim();
-    let found = false;
-    products.forEach(p => {
-      const title = p.querySelector('h3').textContent.toLowerCase();
-      const desc = p.querySelector('p').textContent.toLowerCase();
-      if (title.includes(term) || desc.includes(term) || term === '') {
-        p.style.display = 'block';
-        found = true;
-      } else {
-        p.style.display = 'none';
-      }
+// Enhanced real-time search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+    searchProducts();
+    
+    // Reset filters when searching
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.trim() === 'Hamısı') {
+            btn.classList.add('active');
+        }
     });
-    noResults.style.display = found ? 'none' : 'block';
+});
 
-    // Remove active from filters when searching
+// Filter functionality
+function filterProducts(category) {
+    const products = document.querySelectorAll('.product-card');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const noResults = document.getElementById('noResults');
+    
+    // Update active filter button
     filterBtns.forEach(btn => btn.classList.remove('active'));
-    filterBtns[0].classList.add('active'); // 'Hamısı' active
-  }
+    
+    // Find the clicked button and add active class
+    const activeButton = Array.from(filterBtns).find(btn => {
+        return (category === 'all' && btn.textContent.trim() === 'Hamısı') ||
+               (category === 'wood' && btn.textContent.trim() === 'Taxta') ||
+               (category === 'metal' && btn.textContent.trim() === 'Metal') ||
+               (category === 'doors' && btn.textContent.trim() === 'Qapılar') ||
+               (category === 'furniture' && btn.textContent.trim() === 'Mebel') ||
+               (category === 'other' && btn.textContent.trim() === 'Digər');
+    });
+    
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+    
+    // Clear search input when filtering
+    document.getElementById('searchInput').value = '';
+    
+    // Filter products
+    let hasResults = false;
+    products.forEach(product => {
+        if (category === 'all' || product.dataset.category === category) {
+            product.style.display = 'block';
+            hasResults = true;
+        } else {
+            product.style.display = 'none';
+        }
+    });
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => filterProducts(btn.dataset.cat));
-  });
+    // Show/hide no results message
+    noResults.style.display = hasResults || category === 'all' ? 'none' : 'block';
+}
 
-  searchBtn.addEventListener('click', searchProducts);
-  searchInput.addEventListener('input', searchProducts);
-  searchInput.addEventListener('keyup', e => {
-    if (e.key === 'Enter') searchProducts();
-  });
+// Search on Enter key
+document.getElementById('searchInput').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+        searchProducts();
+    }
+});
 
-  // Show all on load
-  filterProducts('all');
-</script>
-</body>
-</html>
+// Initialize with all products shown
+window.addEventListener('DOMContentLoaded', function() {
+    filterProducts('all');
+});
